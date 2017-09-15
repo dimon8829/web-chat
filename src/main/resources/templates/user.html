@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title>Registration new user</title>
+
+</head>
+<body>
+
+<h3>Registration new user</h3>
+<form action="#" th:action="@{/user}" th:object="${userForm}" method="post">
+    <table>
+        <tr>
+            <td>Login:</td>
+            <td><input type="text" th:field="*{login}" /></td>
+            <td th:if="${#fields.hasErrors('login')}" th:errors="*{login}">Login Error</td>
+        </tr>
+        <tr>
+            <td>Password:</td>
+            <td><input type="password" th:field="*{password}" /></td>
+            <td th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</td>
+        </tr>
+        <tr>
+            <td><button type="submit">Submit</button></td>
+        </tr>
+    </table>
+</form>
+
+
+</body>
+</html>

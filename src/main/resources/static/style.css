@@ -1,0 +1,110 @@
+#wrapper {
+    width: 500px;
+    height: 500px;
+    margin: 0 auto;
+}
+
+#add-room {
+    display: none;
+}
+
+#add-room input[type="text"]{
+    width: 80px;
+}
+
+#wrapper-rooms {
+    padding: 5px;
+    width: 136px;
+    height: 436px;
+    float: left;
+    border: 2px solid black;
+}
+#rooms {
+    height: 400px;
+    padding-left: 0;
+    margin-left: 5px;
+    overflow: auto;
+}
+#rooms li {
+    list-style: none;
+    display: block;
+    position: relative;
+}
+
+#rooms li .number{
+    color:red;
+    font-size: 8pt;
+    position: absolute;
+    right: 0;
+    top:0;
+}
+#rooms li.current-room .number{
+    display: none;
+}
+
+#rooms li:hover {
+    background-color: aquamarine;
+    cursor: pointer;
+}
+
+#rooms li.current-room {
+    background-color: aqua;
+}
+
+#messages {
+    width: 326px;
+    height: 426px;
+    padding: 10px;
+    margin-left: 150px;
+    border: 2px solid black;
+    overflow: auto;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+#messages p {
+    margin: 6px 0;
+    border: 1px solid aqua;
+    border-radius: 8px;
+    position: relative;
+    padding-top: 10px;
+}
+
+#messages p .author {
+    color: grey;
+    font-size: 8pt;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#messages p .date {
+    color: grey;
+    font-size: 8pt;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+#add-message {
+    width: 476px;
+    height: 30px;
+    clear: both;
+    border: 2px solid black;
+    padding: 10px;
+}
+
+#add-message textarea {
+    width: 400px;
+    height: 25px;
+}
+
+#add-message input[type="button"] {
+    width: 50px;
+    height: 30px;
+    float: right;
+}
+
+
+
+

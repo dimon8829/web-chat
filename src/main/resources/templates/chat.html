@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Все чаты!</title>
+    <script src="/jquery-3.2.1.min.js"></script>
+    <script src="/jsrender.min.js"></script>
+    <script src="/sockjs.min.js"></script>
+    <script src="/stomp.min.js"></script>
+    <script src="/script.js"></script>
+    <link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+
+<div id="wrapper">
+<div id="wrapper-rooms">
+    <div id="title-rooms">
+        <span>Chat rooms</span>
+        <input type="button" value="+"/>
+    </div>
+    <div id="add-room">
+        <input type="text"/>
+        <input type="button" value="Add"/>
+    </div>
+    <ul id="rooms">
+
+    </ul>
+
+
+
+</div>
+<div id="messages">
+
+</div>
+<div id="add-message">
+    <textarea placeholder="Enter message..."></textarea>
+    <input type="button" value="send"/>
+
+</div>
+</div>
+
+
+<script id="room" type="text/x-jsrender">
+<li data-id="{{:id}}">{{:name}}<span class="number">{{if numberUnreadMessages}}{{:numberUnreadMessages}}{{/if}}</span></li>
+</script>
+<script id="message" type="text/x-jsrender">
+<p><span class="author">{{:author}}</span><span class="date">{{:dateCreate}}</span>{{:message}}</p>
+</script>
+<script>
+    $(document).ready(function () {
+        function connectWebSocket() {
+            var socket = new SockJS('/chatWS');
+            stompClient = Stomp.over(socket);
+            //stompClient.debug = null;
+
+            stompClient.connect({}, function() {
+                stompClient.subscribe('/topic/message', function(message) {
+                    var data = JSON.parse(message.body);
+                    onNewMessage(data.items[0]);
+                });
+                stompClient.subscribe('/topic/room', function(message) {
+                    var data = JSON.parse(message.body);
+                    onNewRoom(data.items[0]);
+                });
+
+            });
+        }
+
+        function onNewMessage(data) {
+            var idCurrentRoom = $("#rooms li.current-room").attr("data-id");
+            if(parseInt(idCurrentRoom)==data.idChatRoom) {
+                var html=messageTemplate.render(data);
+                $("#messages").prepend(html);
+            }
+            var numberUnreadMessageElement = $("#rooms li[data-id='"+data.idChatRoom+"'] .number");
+            var numberUnreadMessage = numberUnreadMessageElement.text();
+            var newNumberUnreadMessage;
+            if(numberUnreadMessage) newNumberUnreadMessage=parseInt(numberUnreadMessage)+1;
+            else newNumberUnreadMessage=1;
+            numberUnreadMessageElement.text(newNumberUnreadMessage);
+        }
+
+        function onNewRoom(data) {
+            var html=roomTemplate.render(data);
+            $("#rooms").prepend(html);
+        }
+
+        connectWebSocket();
+
+        var roomTemplate = $.templates("#room");
+        var messageTemplate = $.templates("#message");
+        api.getRooms(0,30,function(data){
+
+            for(var i=0;i<data.items.length;i++) {
+                var html=roomTemplate.render(data.items[i]);
+                $("#rooms").append(html);
+            }
+
+
+            if(data.count>0) {
+                initCurrentRoom(data.items[0].id);
+                var run=false;
+                $('#rooms').on('scroll', function() {
+                    if(run) return;
+
+                    if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+                        run=true;
+                        api.getRooms($('#rooms li').length,15,function(data){
+                            for(var i=0;i<data.items.length;i++) {
+                                var html=roomTemplate.render(data.items[i]);
+                                $('#rooms').append(html);
+                            }
+                            run=false;
+                        });
+                    }
+                })
+            }
+
+        });
+
+        function initCurrentRoom(idChatRoom) {
+            $("#messages").html("");
+            $("#rooms li").removeClass("current-room");
+            $("#rooms li[data-id='"+idChatRoom+"']").addClass("current-room");
+            api.getMessages(idChatRoom,0,15,function(data){
+                for(var i=0;i<data.items.length;i++) {
+                    var html=messageTemplate.render(data.items[i]);
+                    $("#messages").append(html);
+                }
+
+                var run=false;
+                $('#messages').on('scroll', function() {
+                    if(run) return;
+                    if($(this).scrollTop()<=0) {
+                        run=true;
+                        api.getMessages(idChatRoom,$('#messages p').length,10,function(data){
+                            for(var i=0;i<data.items.length;i++) {
+                                var html=messageTemplate.render(data.items[i]);
+                                $('#messages').append(html);
+                            }
+                            run=false;
+                        });
+                    }
+                })
+            });
+        }
+
+        $("body").on("click","#rooms li",function () {
+            var idChatRoom = $(this).attr("data-id");
+            initCurrentRoom(idChatRoom);
+        });
+
+
+        var addRoom = $("#add-room");
+        var titleRoom = $("#title-rooms");
+        $('#title-rooms input[type="button"]').on("click",function () {
+            addRoom.show();
+            titleRoom.hide();
+        });
+
+        $("#add-room input[type='button']").on("click",function () {
+            var inputRoom = $("#add-room input[type='text']");
+            api.addRoom(inputRoom.val(), function() {
+                $("#add-room input[type='text']").val("");
+                addRoom.hide();
+                titleRoom.show();
+            });
+        });
+
+        $("#add-message input[type='button']").on("click",function () {
+            var inputMessage = $("#add-message textarea");
+            var idChatRoom = $(".current-room").attr("data-id");
+            api.addMessage(idChatRoom,inputMessage.val(),function() {
+                inputMessage.val("");
+            });
+        });
+
+
+
+    });
+
+</script>
+</body>
+</html>
