@@ -1,7 +1,7 @@
 
 
 function API() {
-    var host="http://localhost:8000";
+    var host="";
     var urlAddMessage = "/message";
     var urlGetMessages = "/message";
     var urlAddChatRoom = "/room";
