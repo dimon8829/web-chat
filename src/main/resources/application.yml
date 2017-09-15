@@ -1,4 +1,3 @@
-
 spring:
   jpa:
     hibernate:
@@ -6,10 +5,10 @@ spring:
     show-sql: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://localhost:3306/web_chat
-    driver-class-name: com.mysql.jdbc.Driver
-    username: root
-    password: JsD~Y@B4?#XE
+    url: jdbc:postgres://zfacuchnuspcgl:c67a80869cb0d0a3af6c6eeb6d8a40151fa5d535afcbb084bcf0298d2ae8dff9@ec2-54-75-224-100.eu-west-1.compute.amazonaws.com:5432/d6pptcuu55002e
+    driver-class-name: org.postgresql.Driver
+    username: zfacuchnuspcgl
+    password: c67a80869cb0d0a3af6c6eeb6d8a40151fa5d535afcbb084bcf0298d2ae8dff9
     hikari:
       maximum-pool-size: 5
   thymeleaf:
@@ -17,7 +16,7 @@ spring:
     check-template: false
     mode: LEGACYHTML5
 server:
-  port: 8000
+  port: 80
 
 
 

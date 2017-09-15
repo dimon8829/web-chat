@@ -1,0 +1,23 @@
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://localhost:3306/web_chat
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: JsD~Y@B4?#XE
+    hikari:
+      maximum-pool-size: 5
+  thymeleaf:
+    cache: false
+    check-template: false
+    mode: LEGACYHTML5
+server:
+  port: 8000
+
+
+
