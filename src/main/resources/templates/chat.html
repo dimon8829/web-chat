@@ -70,13 +70,15 @@
             if(parseInt(idCurrentRoom)==data.idChatRoom) {
                 var html=messageTemplate.render(data);
                 $("#messages").prepend(html);
+            } else {
+                var numberUnreadMessageElement = $("#rooms li[data-id='"+data.idChatRoom+"'] .number");
+                var numberUnreadMessage = numberUnreadMessageElement.text();
+                var newNumberUnreadMessage;
+                if(numberUnreadMessage) newNumberUnreadMessage=parseInt(numberUnreadMessage)+1;
+                else newNumberUnreadMessage=1;
+                numberUnreadMessageElement.text(newNumberUnreadMessage);
             }
-            var numberUnreadMessageElement = $("#rooms li[data-id='"+data.idChatRoom+"'] .number");
-            var numberUnreadMessage = numberUnreadMessageElement.text();
-            var newNumberUnreadMessage;
-            if(numberUnreadMessage) newNumberUnreadMessage=parseInt(numberUnreadMessage)+1;
-            else newNumberUnreadMessage=1;
-            numberUnreadMessageElement.text(newNumberUnreadMessage);
+
         }
 
         function onNewRoom(data) {
@@ -121,6 +123,7 @@
             $("#messages").html("");
             $("#rooms li").removeClass("current-room");
             $("#rooms li[data-id='"+idChatRoom+"']").addClass("current-room");
+            $("#rooms li[data-id='"+idChatRoom+"'] .number").text("");
             api.getMessages(idChatRoom,0,15,function(data){
                 for(var i=0;i<data.items.length;i++) {
                     var html=messageTemplate.render(data.items[i]);
